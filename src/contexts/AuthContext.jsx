@@ -1,8 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
 import { auth } from '../services/firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import api from '../services/api';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged 
+} from 'firebase/auth';
+import { apiService } from '../services/api';
+import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 
@@ -73,7 +78,7 @@ export const AuthProvider = ({ children }) => {
           
           // Verify token with backend
           try {
-            const response = await api.get('/auth/me');
+            const response = await apiService.get('/auth/me');
             setUser(response.data.user);
             setUserRole(response.data.user.role);
           } catch (error) {
@@ -94,7 +99,7 @@ export const AuthProvider = ({ children }) => {
             // If we don't have a backend token, try to authenticate
             if (!token) {
               try {
-                const response = await api.post('/auth/firebase', { idToken });
+                const response = await apiService.post('/auth/firebase', { idToken });
                 const { token: backendToken, user: backendUser } = response.data;
                 
                 // Store token in cookies
@@ -167,7 +172,7 @@ export const AuthProvider = ({ children }) => {
       }
       
       // If not a dummy account, try real API
-      const response = await api.post('/auth/login', credentials);
+      const response = await apiService.post('/auth/login', credentials);
       const { token: authToken, user: authUser } = response.data;
       
       // Store token in cookies
@@ -188,7 +193,7 @@ export const AuthProvider = ({ children }) => {
   // Register function
   const register = async (userData) => {
     try {
-      const response = await api.post('/auth/register', userData);
+      const response = await apiService.post('/auth/register', userData);
       const { token: authToken, user: authUser } = response.data;
       
       // Store token in cookies
@@ -211,7 +216,7 @@ export const AuthProvider = ({ children }) => {
     try {
       // Call backend logout endpoint
       if (token) {
-        await api.post('/auth/logout');
+        await apiService.post('/auth/logout');
       }
     } catch (error) {
       console.error('Error logging out from backend:', error);
@@ -230,7 +235,7 @@ export const AuthProvider = ({ children }) => {
   // Update user profile
   const updateProfile = async (profileData) => {
     try {
-      const response = await api.put('/auth/profile', profileData);
+      const response = await apiService.put('/auth/profile', profileData);
       setUser(response.data.user);
       return { success: true };
     } catch (error) {

@@ -42,7 +42,7 @@ const Modal = ({
       centered={centered}
       closable={closable}
       maskClosable={maskClosable}
-      destroyOnClose={destroyOnClose}
+      destroyOnHidden={destroyOnClose}
       className={`elaw-modal ${className}`}
       style={{
         borderRadius: '12px',
