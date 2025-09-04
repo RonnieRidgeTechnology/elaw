@@ -9,15 +9,7 @@ const { Content } = Layout;
 const PublicLayout = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Navbar />
-      <Content style={{ 
-        paddingTop: '64px', // Height of navbar
-        minHeight: 'calc(100vh - 64px)',
-        background: '#f5f5f5'
-      }}>
         <Outlet />
-      </Content>
-      <Footer />
     </Layout>
   );
 };

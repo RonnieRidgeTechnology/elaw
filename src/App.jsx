@@ -5,7 +5,6 @@ import { AuthProvider } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import router from './routes';
 
-// Ant Design theme configuration
 const theme = {
   token: {
     colorPrimary: '#1890ff',

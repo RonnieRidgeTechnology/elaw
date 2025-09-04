@@ -33,6 +33,9 @@ import BookLawyer from '../pages/client/BookLawyer';
 
 // Common Components
 import DashboardRedirect from '../components/common/DashboardRedirect';
+import LoginPage from '../pages/auth/LoginPage';
+import SignupMainPage from '../pages/auth/SignupMainPage';
+import SignupPageAsaUser from '../pages/auth/SignupPageAsaUser';
 
 // Create router configuration
 export const router = createBrowserRouter([
@@ -55,12 +58,12 @@ export const router = createBrowserRouter([
     ]
   },
   {
-    path: '/auth',
+    path: '/auth/',
     element: <PublicLayout />,
     children: [
       {
         path: 'login',
-        element: <Login />
+        element: <LoginPage />
       },
       {
         path: 'register',
@@ -69,6 +72,14 @@ export const router = createBrowserRouter([
       {
         path: 'forgot-password',
         element: <ForgotPassword />
+      },
+      {
+        path: 'signup',
+        element: <SignupMainPage />
+      },
+      {
+        path: 'signup-user',
+        element: <SignupPageAsaUser />
       }
     ]
   },

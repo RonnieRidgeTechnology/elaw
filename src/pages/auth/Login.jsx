@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import { validateForm } from '../../utils/validation';
+import FancyButton from '../../components/common/FancyButton';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -51,7 +52,6 @@ const Login = () => {
     } catch (err) {
       const errorMsg = 'An unexpected error occurred. Please try again.';
       setError(errorMsg);
-      message.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -152,7 +152,7 @@ const Login = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button
+            <FancyButton
               variant="primary"
               size="large"
               loading={loading}
@@ -160,7 +160,7 @@ const Login = () => {
               style={{ width: '100%' }}
             >
               {loading ? 'Signing In...' : 'Sign In'}
-            </Button>
+            </FancyButton>
           </Form.Item>
         </Form>
 
@@ -172,7 +172,7 @@ const Login = () => {
             size="large"
             icon={<UserOutlined />}
             style={{ width: '100%' }}
-            onClick={() => navigate('/auth/register')}
+            onClick={() => navigate('/auth/signup')}
           >
             Create New Account
           </Button>
@@ -189,7 +189,7 @@ const Login = () => {
         <div style={{ textAlign: 'center', marginTop: '16px' }}>
           <Text type="secondary">
             Don't have an account?{' '}
-            <Link to="/auth/register">
+            <Link to="/auth/signup">
               <Text style={{ color: '#1890ff', cursor: 'pointer' }}>
                 Sign up here
               </Text>

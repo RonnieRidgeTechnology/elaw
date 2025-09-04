@@ -1,9 +1,11 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+   const base_url = 'https://legal-helpline.ronniemarket.com/api/'
+    const img_url = 'https://legal-helpline.ronniemarket.com/'
 
 // Create axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
+  baseURL: base_url,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -180,7 +182,7 @@ const apiService = {
 // API endpoints
 export const endpoints = {
   // Auth
-  login: '/auth/login',
+  login: 'login',
   register: '/auth/register',
   logout: '/auth/logout',
   forgotPassword: '/auth/forgot-password',
