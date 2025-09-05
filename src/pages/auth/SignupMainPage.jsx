@@ -32,7 +32,9 @@ const SignupMainPage = () => {
 
           {/* Text */}
           <div className="login-text text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Create New Account</h1>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Create New Account
+            </h1>
             <p className="text-gray-500 mt-2">Select one of these.</p>
           </div>
 
@@ -48,8 +50,14 @@ const SignupMainPage = () => {
                 }`}
               onClick={() => setSelectedOption("user")}
             >
-              <img src={userIcon} alt="User Icon" className="w-16 h-16 object-contain" />
-              <p className="text-lg text-gray-700 font-normal">Sign Up as a User</p>
+              <img
+                src={userIcon}
+                alt="User Icon"
+                className="w-16 h-16 object-contain"
+              />
+              <p className="text-lg text-gray-700 font-normal">
+                Sign Up as a User
+              </p>
             </div>
 
             {/* Lawyer Option */}
@@ -62,8 +70,14 @@ const SignupMainPage = () => {
                 }`}
               onClick={() => setSelectedOption("lawyer")}
             >
-              <img src={lawyerIcon} alt="Lawyer Icon" className="w-16 h-16 object-contain" />
-              <p className="text-lg text-gray-700 font-normal">Sign Up as a Lawyer</p>
+              <img
+                src={lawyerIcon}
+                alt="Lawyer Icon"
+                className="w-16 h-16 object-contain"
+              />
+              <p className="text-lg text-gray-700 font-normal">
+                Sign Up as a Lawyer
+              </p>
             </div>
           </div>
 
@@ -75,15 +89,10 @@ const SignupMainPage = () => {
               role="button"
               tabIndex="0"
               onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') handleNavigate();
+                if (e.key === "Enter" || e.key === " ") handleNavigate();
               }}
             >
-              <FancyButton
-                disabled={!selectedOption}
-               
-              >
-                Next
-              </FancyButton>
+              <FancyButton disabled={!selectedOption}>Next</FancyButton>
             </div>
 
             {/* Login Link */}
@@ -91,7 +100,10 @@ const SignupMainPage = () => {
               <h4 className="text-sm text-gray-600">
                 I have an account:{" "}
                 <strong>
-                  <Link to="/auth/login" className="text-blue-600 hover:underline">
+                  <Link
+                    to="/auth/login"
+                    className="text-blue-600 hover:underline"
+                  >
                     Login Now
                   </Link>
                 </strong>
@@ -108,7 +120,9 @@ const SignupMainPage = () => {
             <h3 className="text-2xl font-semibold text-white">
               The Simplest Way to Manage Your Workforce!
             </h3>
-            <p className="text-white mt-2">Enter your credentials to access your account</p>
+            <p className="text-white mt-2">
+              Enter your credentials to access your account
+            </p>
           </div>
           <div className="chart-container mt-6 flex justify-center">
             <LoginIllustration />

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { LoginIllustration } from "../../assets/utils/icon";
 import { useAuth } from "../../contexts/AuthContext";
+import CustomDropdown from "../../components/common/CustomDropdown";
 
 const SignupPageAsaUser = () => {
   const navigate = useNavigate();
@@ -100,6 +101,33 @@ const SignupPageAsaUser = () => {
     }
   };
 
+  // Handle dropdown selection
+  const handleDropdownChange = (name, value) => {
+    setUserObj((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Clear error on change
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+
+    // Handle dependent dropdowns
+    if (name === "country_id") {
+      getAllStatesById(value);
+      setUserObj((prev) => ({ ...prev, state_id: "", city_id: "" }));
+    }
+    if (name === "state_id") {
+      getAllDistricsByStateId(value);
+      setUserObj((prev) => ({ ...prev, city_id: "" }));
+    }
+  };
+
   // Validate single field
   const validateField = (name, value) => {
     let error = "";
@@ -168,8 +196,6 @@ const SignupPageAsaUser = () => {
   const handleSubmit = () => {
     if (validateForm()) {
       RegisterClient(userObj);
-      // Optionally reset form
-      // setUserObj({ ...initialState });
     }
   };
 
@@ -180,10 +206,73 @@ const SignupPageAsaUser = () => {
     }
   }, [clientRegister, navigate]);
 
+  // Gender dropdown items
+  const genderItems = [
+    { label: "Male", key: "male" },
+    { label: "Female", key: "female" },
+    { label: "Other", key: "other" },
+  ];
+
+  // Country dropdown items
+  const countryItems = AllCountries?.data?.map((country) => ({
+    label: country.name,
+    key: country.id.toString(),
+  })) || [];
+
+  // State dropdown items
+  const stateItems = AllStatesById?.data?.map((state) => ({
+    label: state.name,
+    key: state.id.toString(),
+  })) || [];
+
+  // City dropdown items
+  const cityItems = AllDistrictsByStateId?.data?.map((city) => ({
+    label: city.name,
+    key: city.id.toString(),
+  })) || [];
+
+  // Handle menu clicks for dropdowns
+  const handleGenderClick = (e) => {
+    handleDropdownChange("gender", e.key);
+  };
+
+  const handleCountryClick = (e) => {
+    handleDropdownChange("country_id", e.key);
+  };
+
+  const handleStateClick = (e) => {
+    handleDropdownChange("state_id", e.key);
+  };
+
+  const handleCityClick = (e) => {
+    handleDropdownChange("city_id", e.key);
+  };
+
+  // Get selected labels for display
+  const getSelectedGenderLabel = () => {
+    const selected = genderItems.find(item => item.key === userObj.gender);
+    return selected ? selected.label : "Select Gender";
+  };
+
+  const getSelectedCountryLabel = () => {
+    const selected = countryItems.find(item => item.key === userObj.country_id);
+    return selected ? selected.label : "Select Country";
+  };
+
+  const getSelectedStateLabel = () => {
+    const selected = stateItems.find(item => item.key === userObj.state_id);
+    return selected ? selected.label : "Select State";
+  };
+
+  const getSelectedCityLabel = () => {
+    const selected = cityItems.find(item => item.key === userObj.city_id);
+    return selected ? selected.label : "Select City";
+  };
+
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50 h-screen">
+    <div className="flex flex-col lg:flex-row bg-white h-screen">
       {/* Left Form Section */}
-      <div className="flex-1 p-6 lg:p-10 overflow-y-auto bg-white max-w-full lg:max-w-md mx-auto lg:mx-0">
+      <div className="flex-1 p-6 lg:p-10 overflow-y-auto bg-white mx-auto lg:mx-0">
         <div className="formLogo mb-8 text-center">
           <Link to="/">
             <img src={loginlogo} alt="Logo" className="inline-block h-12" />
@@ -310,7 +399,7 @@ const SignupPageAsaUser = () => {
                 value={userObj.password}
                 onChange={handleInputChange}
                 placeholder="••••••••"
-                className={`w-full px-4 py-2 pl-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.password ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -378,7 +467,7 @@ const SignupPageAsaUser = () => {
                 value={userObj.password_confirmation}
                 onChange={handleInputChange}
                 placeholder="••••••••"
-                className={`w-full px-4 py-2 pl-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.password_confirmation
                     ? "border-red-500"
                     : "border-gray-300"
@@ -405,30 +494,26 @@ const SignupPageAsaUser = () => {
             )}
           </div>
 
-          {/* Gender */}
+          {/* Gender - CustomDropdown */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Gender
+            <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+              <User size={16} className="mr-1 text-gray-500" /> Gender
             </label>
-            <select
-              name="gender"
-              value={userObj.gender}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.gender ? "border-red-500" : "border-gray-300"
-              }`}
-            >
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
+            <div className={`border rounded-lg ${errors.gender ? "border-red-500" : "border-gray-300"}`}>
+              <CustomDropdown
+                items={genderItems}
+                buttonText={getSelectedGenderLabel()}
+                buttonType="ghost"
+                onMenuClick={handleGenderClick}
+                className="w-full"
+              />
+            </div>
             {errors.gender && (
               <p className="mt-1 text-xs text-red-500">{errors.gender}</p>
             )}
           </div>
 
-          {/* Country */}
+          {/* Country - CustomDropdown */}
           <div>
             <label
               htmlFor="country_id"
@@ -436,32 +521,21 @@ const SignupPageAsaUser = () => {
             >
               <Globe size={16} className="mr-1 text-gray-500" /> Country
             </label>
-            <select
-              name="country_id"
-              value={userObj.country_id}
-              onChange={(e) => {
-                handleInputChange(e);
-                getAllStatesById(e.target.value);
-              }}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.country_id ? "border-red-500" : "border-gray-300"
-              }`}
-            >
-              <option value="" hidden>
-                Select a Country
-              </option>
-              {AllCountries?.data?.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
+            <div className={`border rounded-lg ${errors.country_id ? "border-red-500" : "border-gray-300"}`}>
+              <CustomDropdown
+                items={countryItems}
+                buttonText={getSelectedCountryLabel()}
+                buttonType="ghost"
+                onMenuClick={handleCountryClick}
+                className="w-full"
+              />
+            </div>
             {errors.country_id && (
               <p className="mt-1 text-xs text-red-500">{errors.country_id}</p>
             )}
           </div>
 
-          {/* State */}
+          {/* State - CustomDropdown */}
           <div>
             <label
               htmlFor="state_id"
@@ -469,32 +543,22 @@ const SignupPageAsaUser = () => {
             >
               <MapPin size={16} className="mr-1 text-gray-500" /> State
             </label>
-            <select
-              name="state_id"
-              value={userObj.state_id}
-              onChange={(e) => {
-                handleInputChange(e);
-                getAllDistricsByStateId(e.target.value);
-              }}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.state_id ? "border-red-500" : "border-gray-300"
-              }`}
-            >
-              <option value="" hidden>
-                Select a State
-              </option>
-              {AllStatesById?.data?.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
+            <div className={`border rounded-lg ${errors.state_id ? "border-red-500" : "border-gray-300"}`}>
+              <CustomDropdown
+                items={stateItems}
+                buttonText={getSelectedStateLabel()}
+                buttonType="ghost"
+                onMenuClick={handleStateClick}
+                disabled={!userObj.country_id}
+                className="w-full"
+              />
+            </div>
             {errors.state_id && (
               <p className="mt-1 text-xs text-red-500">{errors.state_id}</p>
             )}
           </div>
 
-          {/* City */}
+          {/* City - CustomDropdown */}
           <div>
             <label
               htmlFor="city_id"
@@ -502,23 +566,16 @@ const SignupPageAsaUser = () => {
             >
               <MapPin size={16} className="mr-1 text-gray-500" /> City
             </label>
-            <select
-              name="city_id"
-              value={userObj.city_id}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.city_id ? "border-red-500" : "border-gray-300"
-              }`}
-            >
-              <option value="" hidden>
-                Select a City
-              </option>
-              {AllDistrictsByStateId?.data?.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
+            <div className={`border rounded-lg ${errors.city_id ? "border-red-500" : "border-gray-300"}`}>
+              <CustomDropdown
+                items={cityItems}
+                buttonText={getSelectedCityLabel()}
+                buttonType="ghost"
+                onMenuClick={handleCityClick}
+                disabled={!userObj.state_id}
+                className="w-full"
+              />
+            </div>
             {errors.city_id && (
               <p className="mt-1 text-xs text-red-500">{errors.city_id}</p>
             )}
@@ -604,19 +661,21 @@ const SignupPageAsaUser = () => {
       </div>
 
       {/* Right Illustration (Hidden on mobile) */}
-        <div className="hidden lg:flex flex-1 bg-legal-blue p-12 items-center justify-center">
-               <div className="text-center max-w-lg">
-                 <div className="rightBoxtext mb-8">
-                   <h3 className="text-2xl font-semibold text-white">
-                     The Simplest Way to Manage Your Workforce!
-                   </h3>
-                   <p className="text-white mt-2">Enter your credentials to access your account</p>
-                 </div>
-                 <div className="chart-container mt-6 flex justify-center">
-                   <LoginIllustration />
-                 </div>
-               </div>
-             </div>
+      <div className="hidden lg:flex flex-1 bg-legal-blue p-12 items-center justify-center">
+        <div className="text-center max-w-lg">
+          <div className="rightBoxtext mb-8">
+            <h3 className="text-2xl font-semibold text-white">
+              The Simplest Way to Manage Your Workforce!
+            </h3>
+            <p className="text-white mt-2">
+              Enter your credentials to access your account
+            </p>
+          </div>
+          <div className="chart-container mt-6 flex justify-center">
+            <LoginIllustration />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
